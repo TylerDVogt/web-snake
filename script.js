@@ -1,6 +1,7 @@
 const canvas = document.getElementById("game");
 const context = canvas.getContext("2d");
 const tileSize = 25;
+const boardBackground = "white";
 const numOfRows = canvas.width/tileSize;
 const numOfColumns = canvas.height/tileSize;
 let running = false;
@@ -9,7 +10,7 @@ let snake = {
         {row: (numOfRows/2)-1, column: numOfColumns/2},
         {row: (numOfRows/2)-2, column: numOfColumns/2},
         {row: (numOfRows/2)-3, column: numOfColumns/2}],
-    dx: tileSize,
+    dx: 1,
     dy: 0
 };
 let food = {
@@ -18,18 +19,31 @@ let food = {
 };
 let availableTiles = [];
 
-startGame();
+init();
 
-function startGame(){
+function init(){
     drawSnake();
     populateAvailableTiles();
     createFood();
     drawFood();
-    
+}
+
+function startGame(){
+    if(running){
+        return;
+    }
+    running = true;
+    window.requestAnimationFrame(gameLoop);
 }
 
 function gameLoop(){
-    
+    setTimeout(()=>{
+        clearBoard();
+        drawFood();
+        moveSnake();
+        drawSnake();
+        gameLoop();
+    }, 200)
 }
 
 function populateAvailableTiles(){
@@ -50,24 +64,35 @@ function populateAvailableTiles(){
     }
 }
 
-function moveSnake(){}
+function collisionCheck(){
+
+}
+
+function moveSnake(){
+    let head = {row: snake.components[0].row+snake.dx,column: snake.components[0].column+snake.dy};
+    snake.components.unshift(head);
+    snake.components.pop();
+}
 
 function drawSnake(){
+    context.fillStyle = "green";
+    context.strokeStyle = "black";
     snake.components.forEach((element) => {
-        context.fillStyle = "green";
-        context.fillRect(element.row*tileSize,element.column*tileSize,tileSize,tileSize)
+        context.fillRect(element.row*tileSize,element.column*tileSize,tileSize,tileSize);
+        context.strokeRect(element.row*tileSize,element.column*tileSize,tileSize,tileSize)
     });
 }
 
+function clearBoard(){
+    context.fillStyle = boardBackground;
+    context.fillRect(0,0,numOfRows*tileSize,numOfColumns*tileSize);
+}
 
 function createFood(){
     let index = Math.floor(Math.random()*availableTiles.length);
     let tile = availableTiles[index]
     food.row = tile.row;
     food.column = tile.column;
-    console.log(food.row);
-    console.log(food.column);
-    console.log(availableTiles.length);
 }
 function drawFood(){
     context.fillStyle = "red";
