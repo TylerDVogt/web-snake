@@ -1,0 +1,12 @@
+#wrapper{
+    text-align:center;
+}
+
+button{
+    width: 100px;
+    height: 50px;
+}
+
+canvas{
+    border:5px solid black;
+}
